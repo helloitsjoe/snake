@@ -1,0 +1,84 @@
+<html>
+    <body>
+        <canvas id="canvas" width="400" height="400">
+    </body>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        const unit = boardSize = 20;
+        let vx = vy = 0;
+        let px = py = 10;
+        let ax = ay = 15;
+        let tailLength = 5;
+        let t = [];
+
+        document.addEventListener('keydown', (evt) => {
+            switch (evt.keyCode) {
+                case 37:
+                    vx = -1;
+                    vy = 0;
+                    break;
+                case 38:
+                    vx = 0;
+                    vy = -1;
+                    break;
+                case 39:
+                    vx = 1;
+                    vy = 0;
+                    break;
+                case 40:
+                    vx = 0;
+                    vy = 1;
+                    break;
+            }
+        });
+
+
+        const update = () => {
+
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'red';
+            ctx.fillRect(ax * unit, ay * unit, unit - 2, unit - 2);
+
+            px += vx;
+            py += vy;
+
+            if (px > boardSize) {
+                px = 0;
+            } else if (px < 0) {
+                px = boardSize
+            } else if (py > boardSize) {
+                py = 0;
+            } else if (py < 0) {
+                py = boardSize;
+            }
+
+            if (px === ax && py === ay) {
+                tailLength++;
+                console.log(`tailLength:`, tailLength);
+                ax = Math.floor(Math.random() * boardSize);
+                ay = Math.floor(Math.random() * boardSize);
+            }
+
+            ctx.fillStyle = 'limegreen';
+
+            for (let i = 0; i < t.length; i++) {
+                ctx.fillRect(t[i].px * unit, t[i].py * unit, unit - 2, unit - 2);
+                if (px === t[i].px && py === t[i].py) {
+                    tailLength = 5;
+                }
+            }
+
+            while (t.length >= tailLength) {
+                t.shift();
+            }
+
+            t.push({ px, py });
+        };
+
+        setInterval(update, 1000 / 15);
+    </script>
+</html>
